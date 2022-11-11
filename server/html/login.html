@@ -1,0 +1,36 @@
+<html>
+    <script> 
+        function submit(){
+            let bod = JSON.stringify({
+                "username":document.getElementById('name').value,
+                "password":document.getElementById('password').value
+            })
+            fetch('http://localhost:8080/login.api',{
+                method:'POST',
+                body:bod
+            })
+            .then(( response ) => {
+                console.log(response)
+                if(response.status == 200){
+                    history.pushState("test","","/")
+                }
+                else{
+                    alert("it seems the info you've given is wrong")
+                }
+            })
+        }
+    </script>
+    <body>
+        username
+        <textarea id='name'></textarea>
+        <br/>
+        password
+        <textarea id='password'></textarea>  
+        <br/>
+        <button onClick="submit()">  log in </button>
+        <br/>
+        <a href="/signup.html"> signup </a>
+        <br/>
+        <a href="/index.html"> home </a>
+    </body>
+</html>

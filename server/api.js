@@ -5,7 +5,7 @@ const data = require('./data')
 module.exports = {
     "login": async ({input,res} = {}) => {
         let {password,username} = input
-        let loginInfo = await db.getValue(username)
+        let loginInfo = await db.getPair(username)
         if(!loginInfo){
             res.statusCode = 599
             res.end()
@@ -14,10 +14,10 @@ module.exports = {
             if(password == loginInfo.value){
                 let secret = auth.generateSecret(username)
                 res.setHeader('set-cookie', "secret=" + secret + ";")
-                //res.setHeader('set-cookie', "username=" + username + ";")
                 res.end()
             }
             else{
+                //wut?
                 res.statusCode = 599
                 res.end()
             }
@@ -32,21 +32,18 @@ module.exports = {
             res.end()
         }
         else{
+            res.statusCode = 599
             res.write("username already exists")
             res.end()
         }
     },
     "logout": async ({req, res} = {}) => {
-        let secret = req.headers['cookie']
-        auth.removeSecret(secret)
+        let cookie = req.headers['cookie']
+        auth.removeSecret(cookie)
         res.end()
     },
     "previews": async({res} = {}) => {
         res.write(JSON.stringify(data))
         res.end()
-    },
-    "article": async({} = {}) => {
-
-    
-    },
+    }
 }

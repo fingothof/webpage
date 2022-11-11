@@ -6,8 +6,6 @@ function previews(){
     .then((response) => response.json())
     .then((json) => {
         articles = json.articles
-        let {key} = navigation.currentEntry;
-
         //adding history:'replace' seems to fix the issue where reloading
         //adds to the nagivation.entries
         navigation.navigate(window.location.href,{history:"replace"})

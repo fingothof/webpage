@@ -24,29 +24,18 @@ http.createServer((req,res) => {
 }).listen(8080, () => console.log('listening on port 8080'))
 
 let getHtml = (page, req, res) =>{
-    let htmlPath = path.join(__dirname,'/html/notfound.html')
-    let file = fs.readFileSync(htmlPath)
     try{
-        if(page.includes("secret") && auth.isLoggedIn(req)){
-            htmlPath = path.join(__dirname,'/html',page)
-            file = fs.readFileSync(htmlPath)
+        if(page.includes('/bundle.js')){
+            filePath = path.resolve(__dirname,'html/scripts/')
+            file = bundleJavascript(filePath)
         }
-        //crazy that I have to do it like that
-        else if(page.includes('auth')){
-            htmlPath = path.join(__dirname,'/html','scripts/auth.js')
-            file = fs.readFileSync(htmlPath)
+        else if(page.includes('/css/style.css')){
+            filePath = path.resolve(__dirname,'html/css/style.css')
+            file = fs.readFileSync(filePath)
         }
-        else if(page.includes('previews')){
-            htmlPath = path.join(__dirname,'/html','scripts/previews.js')
-            file = fs.readFileSync(htmlPath)
-        }
-        //else if(page.includes("scripts")){
-            //htmlPath = path.join(__dirname,'/html',page)
-            //file = fs.readFileSync(htmlPath)
-        //}
         else{
-            htmlPath = path.resolve(__dirname,'html/index.html')
-            file = fs.readFileSync(htmlPath)
+            filePath = path.resolve(__dirname,'html/index.html')
+            file = fs.readFileSync(filePath)
         }
     }
     catch(err){
@@ -54,4 +43,16 @@ let getHtml = (page, req, res) =>{
     
     res.write(file)
     res.end()
+}
+
+let bundleJavascript = (folderPath) =>{
+    let folder = fs.readdirSync(folderPath)
+    let bundle = ''
+
+    for(let file of folder){
+        let filePath = path.join(folderPath,file)
+        let currentFile = fs.readFileSync(filePath)
+        bundle = bundle + currentFile
+    }
+    return bundle
 }

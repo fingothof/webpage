@@ -1,25 +1,18 @@
 let redis = require('redis')
-
 const client = redis.createClient();
 
 client.on('error', (err) => console.log('Redis Client Error', err));
 
-let getValue = async (key) =>{
+let getPair = async (key) =>{
     await client.connect();
     const value = await client.get(key);
     await client.disconnect();
-    if(value){
-        return {key:key,value:value}
-    }
-    else{
-        return null
-    }
+    return value ? {key:key,value:value} : null
 }
 
 let setValue = async (key,value) =>{
     await client.connect();
     await client.set(key, value);
-    //does this serve a purpose?
     const info = await client.get(key);
     await client.disconnect();
     return info
@@ -28,19 +21,16 @@ let setValue = async (key,value) =>{
 let setUniqueKey = async (key,value) =>{
     await client.connect();
     let existingKey = await client.get(key)
+    let info = null
     if(!existingKey){
         await client.set(key, value);
-        const info = await client.get(key);
-        await client.disconnect();
-        return info
+        info = await client.get(key);
     }
-    else{
-        console.log("not unique")
-        await client.disconnect()
-        return null
-    }
+    await client.disconnect();
+    return info
 }
 
+//just for dev purposes
 let getAllInfo = async () => {
     await client.connect();
     let values = []
@@ -57,4 +47,4 @@ let getAllInfo = async () => {
     await client.disconnect();
 }
 
-module.exports = { setUniqueKey, getValue, setValue, getAllInfo }
+module.exports = { setUniqueKey, getPair, setValue, getAllInfo }

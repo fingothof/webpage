@@ -39,25 +39,28 @@ let getSecrets = () => {
     return secrets
 }
 
-let removeSecret = (secret) =>{
-    let index = secrets.indexOf(secret)
+let removeSecret = (cookie) =>{
+    let secret = extractSecret(cookie)
+    let index = secrets.findIndex((val) => val.secret == secret)
     secrets.splice(index,1)
 }
 
 let isLoggedIn = (req) => {
     let cookie = req.headers['cookie']
+    let secret = extractSecret(cookie)
+    return secrets.find((val) => val.secret == secret) ? true: false;
+}
 
-    if(!cookie) return false
+let extractSecret = (cookie) => {
+    if(!cookie) return ""
 
     let info = cookie.split(";")
     let secretInfo = info[0]
     let secret = secretInfo.split("=")
-    if(secret[0] == 'secret'){
-        return secrets.includes(secret[1])
-    }
-    else{
-        return false
-    }
+
+    if(secret[0] != 'secret') return ""
+
+    return secret[1]
 }
 
 module.exports = {removeSecret, getSecrets,generateSecret, isLoggedIn}

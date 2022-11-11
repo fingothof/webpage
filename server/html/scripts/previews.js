@@ -6,29 +6,71 @@ function previews(){
     .then((response) => response.json())
     .then((json) => {
         articles = json.articles
-        //doubt its the right api
-        history.pushState(null,'','/')
+        let {key} = navigation.currentEntry;
+
+        //adding history:'replace' seems to fix the issue where reloading
+        //adds to the nagivation.entries
+        navigation.navigate(window.location.href,{history:"replace"})
     })
 }
 
 //handles navigation
 navigation.addEventListener('navigate', event => {
-    console.log('in navigation')
     let url = new URL(event.destination.url);
+
     if(url.pathname == "/"){
         event.intercept({ handler:setPreviews })
     }
-    if(url.pathname.includes("article")){
+    else if(url.pathname.includes("article")){
         event.intercept({ handler: () => {
             setArtice(url)
         }})
     }
-    if(url.pathname.includes("login") || url.pathname.includes("signup")){
+    else if(url.pathname.includes("login") || url.pathname.includes("signup")){
         if(document.cookie != ""){
+            event.intercept({ handler:setPreviews })
+        }
+        else{
+            if(url.pathname.includes("login")){
+                event.intercept({ handler: () => {
+                    login()
+                }})
+            }
+            if(url.pathname.includes("signup")){
+                event.intercept({ handler: () => {
+                    signup()
+                }})
+    
+            }
 
         }
     }
 })
+
+function signup(){
+    let div = document.getElementById('content')
+    div.innerHTML= `username
+        <textarea id='name'></textarea>
+        <br/>
+        password
+        <textarea id='password'></textarea>  
+        <br/>
+        <button onClick="submit('signup')">  sign up </button>
+        <br/>
+        <a href="/"> home </a>`
+}
+function login(){
+    let div = document.getElementById('content')
+    div.innerHTML= `username
+        <textarea id='name'></textarea>
+        <br/>
+        password
+        <textarea id='password'></textarea>  
+        <br/>
+        <button onClick="submit('login')">  log in </button>
+        <br/>
+        <a href="/"> home </a>`
+}
 
 function setPreviews(){
     let div = document.getElementById("content")

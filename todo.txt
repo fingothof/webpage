@@ -1,0 +1,2 @@
+update the 'nav' div when user logs out on a different tab
+loading new articles without having to rerun the server

@@ -75,16 +75,30 @@ function setPreviews(){
     div.innerHTML = ""
     
     for(let article of articles){
+        let articleDiv = document.createElement("div")
+        articleDiv.id = 'article'
+
+        let articleHeader = document.createElement("p")
+        let articleHeaderText = article.article.date + " - " + article.article.author
+        articleHeader.innerHTML= articleHeaderText
+        articleHeader.id = "ah"
+
         let preview = document.createElement("p")
         preview.innerHTML = article.preview
+
         let href = document.createElement("a")
-        href.innerHTML= "read more"
+        href.innerHTML= "read more <br/>"
         href.id = article.id
         href.href = "/article/" + article.id + ".json"
-        div.appendChild(preview)
-        div.appendChild(href)
-        div.appendChild(document.createElement("br"))
-        div.appendChild(document.createElement("br"))
+
+        let underline = document.createElement("p")
+        underline.innerHTML = "_____________________________________"
+
+        articleDiv.appendChild(articleHeader)
+        articleDiv.appendChild(preview)
+        articleDiv.appendChild(href)
+        articleDiv.appendChild(underline)
+        div.appendChild(articleDiv)
     } 
 }
 

@@ -23,6 +23,7 @@ function auth(){
         div.innerHTML = ""
 
         let logout = document.createElement("a")
+        logout.id = "bar"
         logout.innerHTML = "logout"
         logout.href = "/"
         logout.addEventListener("click", logoutHandler)
@@ -34,11 +35,13 @@ function auth(){
         div.innerHTML = ""
 
         let signup = document.createElement("a")
+        signup.id = "bar"
         signup.innerHTML = "signup"
         signup.href = window.location.origin + "/signup"
         div.appendChild(signup)
 
         let login = document.createElement("a")
+        login.id="bar"
         login.innerHTML = "login"
         login.href = window.location.origin + "/login"
         div.appendChild(login)

@@ -38,6 +38,11 @@ let getHtml = (page, res) =>{
             filePath = path.resolve(__dirname,'html/favicon.ico')
             file = fs.readFileSync(filePath)
         }
+        //temporary until I set up something for other images
+        else if(page.includes('png')){
+            filePath = path.resolve(__dirname,'html/banner.png')
+            file = fs.readFileSync(filePath)
+        }
         else{
             filePath = path.resolve(__dirname,'html/index.html')
             file = fs.readFileSync(filePath)

@@ -2,7 +2,6 @@ const http = require('http')
 const fs = require('fs')
 const path = require('path')
 const api = require('./api')
-const auth = require('./auth')
 
 http.createServer((req,res) => {
     let page = req.url
@@ -19,12 +18,14 @@ http.createServer((req,res) => {
     }
     //PAGE REQUESTS
     else{
-        getHtml(page,req,res)
+        getHtml(page,res)
     }
 }).listen(8080, () => console.log('listening on port 8080'))
 
-let getHtml = (page, req, res) =>{
+let getHtml = (page, res) =>{
     try{
+        //using includes is a weird fix for receiving requests 
+        //from unknown paths. ex: /article/1343151513.json/bundle.js
         if(page.includes('/bundle.js')){
             filePath = path.resolve(__dirname,'html/scripts/')
             file = bundleJavascript(filePath)
@@ -49,6 +50,7 @@ let getHtml = (page, req, res) =>{
     res.end()
 }
 
+//this belongs in a seperate file
 let bundleJavascript = (folderPath) =>{
     let folder = fs.readdirSync(folderPath)
     let bundle = ''

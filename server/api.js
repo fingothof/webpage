@@ -6,6 +6,7 @@ module.exports = {
     "login": async ({input,res} = {}) => {
         let {password,username} = input
         let loginInfo = await db.getPair(username)
+        console.log(loginInfo)
         if(!loginInfo){
             res.statusCode = 599
             res.end()

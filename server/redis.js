@@ -1,50 +1,40 @@
-let redis = require('redis')
-const client = redis.createClient();
+const net = require('node:net')
 
-client.on('error', (err) => console.log('Redis Client Error', err));
+let port = 6379
+
+let client = net.createConnection({port : port})
+
+let runCommand = async (command) =>{
+    client.write(command)
+    let promise = new Promise((resolve,reject) =>{
+        let info = ''
+        client.on('data', (data) => {
+            resolve(extractData(data.toString()))
+        })
+    })
+    return promise
+}
+
+let extractData = (data) =>{
+    return data.split("\r\n")[1]
+}
 
 let getPair = async (key) =>{
-    await client.connect();
-    const value = await client.get(key);
-    await client.disconnect();
+    let qry = "*2\r\n$3\r\nGET\r\n$" + key.length + "\r\n" + key + "\r\n"
+    //console.log(qry)
+    let value = await runCommand(qry)
+    console.log(value)
     return value ? {key:key,value:value} : null
 }
 
 let setValue = async (key,value) =>{
-    await client.connect();
-    await client.set(key, value);
-    const info = await client.get(key);
-    await client.disconnect();
-    return info
 }
 
 let setUniqueKey = async (key,value) =>{
-    await client.connect();
-    let existingKey = await client.get(key)
-    let info = null
-    if(!existingKey){
-        await client.set(key, value);
-        info = await client.get(key);
-    }
-    await client.disconnect();
-    return info
 }
 
 //just for dev purposes
 let getAllInfo = async () => {
-    await client.connect();
-    let values = []
-    let all = await client.keys("*")
-    for(let key of all){
-        let value = await client.get(key)
-        let obj = {}
-        obj[key] = value
-        values.push(obj)
-    }
-    console.log("redis db values /*")
-    console.log(values)
-    console.log("*/")
-    await client.disconnect();
 }
 
 module.exports = { setUniqueKey, getPair, setValue, getAllInfo }

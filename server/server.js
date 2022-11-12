@@ -33,6 +33,10 @@ let getHtml = (page, req, res) =>{
             filePath = path.resolve(__dirname,'html/css/style.css')
             file = fs.readFileSync(filePath)
         }
+        else if(page.includes('/favicon.ico')){
+            filePath = path.resolve(__dirname,'html/favicon.ico')
+            file = fs.readFileSync(filePath)
+        }
         else{
             filePath = path.resolve(__dirname,'html/index.html')
             file = fs.readFileSync(filePath)

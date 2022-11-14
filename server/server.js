@@ -4,21 +4,21 @@ const path = require('path')
 const api = require('./api')
 
 http.createServer((req,res) => {
-    let page = req.url
+    let page = new URL(req.url,'https://whatever.org/')
     //API REQUESTS
-    if(page.includes('.api')){
-        let apiName = page.replace('/','').replace('.api','') 
+    if(page.pathname.includes('.api')){
+        let apiName = page.pathname.replace('/','').replace('.api','') 
         let input = null;
         req.on('data', (data) => {
             input = data? JSON.parse(data.toString()) : data;
         })
         req.on('end', () =>{
-            api[apiName]({input:input,req:req,res:res})
+            api[apiName]({input:input? input: page.searchParams,req:req,res:res})
         })
     }
     //PAGE REQUESTS
     else{
-        getHtml(page,res)
+        getHtml(page.pathname,res)
     }
 }).listen(8080, () => console.log('listening on port 8080'))
 
@@ -47,12 +47,15 @@ let getHtml = (page, res) =>{
             filePath = path.resolve(__dirname,'html/index.html')
             file = fs.readFileSync(filePath)
         }
+        res.write(file)
+        res.end()
     }
     catch(err){
+        console.log(err)
+        res.write("page not found")
+        res.end()
     }
     
-    res.write(file)
-    res.end()
 }
 
 //this belongs in a seperate file

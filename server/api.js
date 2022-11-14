@@ -1,6 +1,5 @@
 const auth = require('./auth')
 const db = require('./redis')
-const data = require('./data')
 
 module.exports = {
     "login": async ({input,res} = {}) => {
@@ -43,8 +42,17 @@ module.exports = {
         auth.removeSecret(cookie)
         res.end()
     },
-    "previews": async({res} = {}) => {
-        res.write(JSON.stringify(data))
+    "articles": async({input, res} = {}) => {
+        //max articles per page
+        const max = 3
+        let page = input.get('page')
+
+        let from = ( page  - 1) * max
+        let to = ( page - 1 ) * max + max - 1
+
+        let data = await db.getArticles(from,to)
+        console.log(data)
+        res.write(data)
         res.end()
     }
 }

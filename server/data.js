@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-
+const db = require('./redis')
 let previews = [];
 
 let articles = (() => {
@@ -13,6 +13,9 @@ let articles = (() => {
         let id = file.split(".")[0]
         previews.push(preview)
         articles.push({id:id, article:jsonArt, preview:preview})
+    }
+    for(article of articles){
+        db.setArticle(article)
     }
     return articles
 })()

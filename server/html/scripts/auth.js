@@ -16,7 +16,6 @@ let logoutHandler = () => {
 //used to insert in the "nav" div either 'login/signup' hrefs when not logged in 
 //or a 'logout' href when logged 
 function auth(){
-    console.log('in auth')
     //when logged in
     if(document.cookie != ""){
         let div = document.getElementById("nav")

@@ -2,11 +2,17 @@ let articles = []
 
 const MAX = 8
 
+function entry(){
+    console.log(window.location.href)
+    let url = new URL(window.location.href)
+    navigation.navigate(url.href)
+}
+
 //fetches all info
 function getArticles(newPage = null){
+    console.log('getArticles')
     let params = new URLSearchParams(window.location.search)
     let page = newPage ? newPage : params.get('page') ? params.get('page') : 1
-    console.log(page)
 
     fetch(`http://localhost:8080/articles.api?page=${page}`)
     .then((response) => response.json())
@@ -14,13 +20,12 @@ function getArticles(newPage = null){
         articles = json
         //adding history:'replace' seems to fix the issue where reloading
         //adds to the nagivation.entries
-        navigation.navigate(window.location.origin + `?page=${page}`,{history:"replace"})
+        setArticles()
     })
 }
 
 function homeLink(){
     let div = document.getElementById("homelink")
-    console.log("in test link")
     div.addEventListener("click", () => {
         navigation.navigate('/?page=1')
     })
@@ -43,8 +48,8 @@ function footer(){
         else{
             ref.innerHTML = "   " + i + "   "  
         }
-        ref.addEventListener("click", (event) =>{
-            getArticles(i)
+        ref.addEventListener("click", () =>{
+            navigation.navigate('/?page=' + i)
         })
         element.appendChild(ref)
     }
@@ -53,10 +58,11 @@ function footer(){
 
 //handles navigation
 navigation.addEventListener('navigate', event => {
+    console.log("in navigation event")
     let url = new URL(event.destination.url);
 
     if(url.pathname == "/" || url.search.includes('page')){
-        event.intercept({ handler:setArticles })
+        event.intercept({ handler:getArticles })
     }
     else if(url.pathname.includes("article")){
         event.intercept({ handler: () => {
@@ -108,6 +114,7 @@ function login(){
 }
 
 function setArticles(){
+    console.log('in set articles')
     let div = document.getElementById("content")
     div.innerHTML = ""
     

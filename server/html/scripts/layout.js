@@ -2,23 +2,19 @@ let articles = []
 
 const MAX = 8
 
-//function entry(){
-    //console.log('in entry')
-    //console.log(window.location.href)
-    //navigation.navigate(window.location.href ,{history:"replace"})
-//}
-
 //fetches all info
-function getArticles(page=1){
+function getArticles(newPage = null){
+    let params = new URLSearchParams(window.location.search)
+    let page = newPage ? newPage : params.get('page') ? params.get('page') : 1
+    console.log(page)
+
     fetch(`http://localhost:8080/articles.api?page=${page}`)
     .then((response) => response.json())
     .then((json) => {
         articles = json
-        //console.log(articles[1])
         //adding history:'replace' seems to fix the issue where reloading
         //adds to the nagivation.entries
         navigation.navigate(window.location.origin + `?page=${page}`,{history:"replace"})
-        //setArticles()
     })
 }
 
@@ -26,7 +22,7 @@ function homeLink(){
     let div = document.getElementById("homelink")
     console.log("in test link")
     div.addEventListener("click", () => {
-        navigation.navigate('/')
+        navigation.navigate('/?page=1')
     })
 }
 
@@ -58,9 +54,8 @@ function footer(){
 //handles navigation
 navigation.addEventListener('navigate', event => {
     let url = new URL(event.destination.url);
-    console.log(url)
 
-    if(url.pathname == "/"){
+    if(url.pathname == "/" || url.search.includes('page')){
         event.intercept({ handler:setArticles })
     }
     else if(url.pathname.includes("article")){
@@ -82,9 +77,7 @@ navigation.addEventListener('navigate', event => {
                 event.intercept({ handler: () => {
                     signup()
                 }})
-    
             }
-
         }
     }
 })

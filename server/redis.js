@@ -18,6 +18,7 @@ let runCommand = async (command) =>{
 }
 
 let extractData = (data) =>{
+    console.log(data)
     let splitData = data.split("\r\n")
     let output =[]
     for(let i=1;i<splitData.length;i++){
@@ -39,7 +40,8 @@ let extractData = (data) =>{
 let getPair = async (key) =>{
     let qry = "*2\r\n$3\r\nGET\r\n$" + key.length + "\r\n" + key + "\r\n"
     let value = await runCommand(qry)
-    return value ? {key:key,value:value} : null
+    console.log(value)
+    return value.length != 0 ? {key:key,value:value} : null
 }
 
 let setValue = async (key,value) =>{

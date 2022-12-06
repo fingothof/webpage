@@ -51,7 +51,6 @@ module.exports = {
         let to = ( page - 1 ) * max + max - 1
 
         let data = await db.getArticles(from,to)
-        console.log(data)
         res.write(data)
         res.end()
     }

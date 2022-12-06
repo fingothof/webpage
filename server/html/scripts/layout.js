@@ -1,16 +1,21 @@
 let articles = []
 
-const MAX = 8
+const MAX = 7
+
+homeLinkEventListener()
 
 function entry(){
-    console.log(window.location.href)
     let url = new URL(window.location.href)
-    navigation.navigate(url.href)
+    if(new URL(document.URL).searh == ''){
+        navigation.navigate(url.href + "?page=1")
+    }
+    else{
+        navigation.navigate(url.href)
+    }
 }
 
 //fetches all info
 function getArticles(newPage = null){
-    console.log('getArticles')
     let params = new URLSearchParams(window.location.search)
     let page = newPage ? newPage : params.get('page') ? params.get('page') : 1
 
@@ -24,33 +29,51 @@ function getArticles(newPage = null){
     })
 }
 
-function homeLink(){
+function homeLinkEventListener(){
     let div = document.getElementById("homelink")
     div.addEventListener("click", () => {
         navigation.navigate('/?page=1')
     })
 }
 
-homeLink()
 
 function footer(){
     let div = document.getElementById('content')
     let element = document.createElement("p")
     element.id = "footer"
-    for(let i=0;i<=MAX;i++){
+
+    for(let i=0;i<=MAX+1;i++){
         let ref = document.createElement("a")
-        if(i == 0 ){
-            ref.innerHTML = '< ' 
+        if(i == 0){
+            ref.innerHTML = '<a> < </a>' 
+            ref.addEventListener("click", () =>{
+                console.log('wut?')
+                let currentPage = parseInt(document.URL.split("=")[1])
+                let nextpage = currentPage - 1 
+                if(nextpage >= 1){
+                    navigation.navigate('/?page=' + nextpage)
+                }
+            })
         }
-        else if(i == MAX){
-            ref.innerHTML = ' >' 
+        else if(i == MAX+1){
+            ref.innerHTML = '<a> > </a>' 
+            ref.addEventListener("click", () =>{
+                let currentPage = parseInt(document.URL.split("=")[1])
+                let nextpage = currentPage + 1 
+                if(nextpage <= MAX){
+                    navigation.navigate('/?page=' + nextpage)
+                }
+                else if(!nextpage){
+                    navigation.navigate('/?page=' + 2)
+                }
+            })
         }
         else{
-            ref.innerHTML = "   " + i + "   "  
+            ref.innerHTML = `<a> ${i} </a>` 
+            ref.addEventListener("click", () =>{
+                navigation.navigate('/?page=' + i)
+            })
         }
-        ref.addEventListener("click", () =>{
-            navigation.navigate('/?page=' + i)
-        })
         element.appendChild(ref)
     }
     div.appendChild(element)
@@ -58,7 +81,6 @@ function footer(){
 
 //handles navigation
 navigation.addEventListener('navigate', event => {
-    console.log("in navigation event")
     let url = new URL(event.destination.url);
 
     if(url.pathname == "/" || url.search.includes('page')){
@@ -114,7 +136,6 @@ function login(){
 }
 
 function setArticles(){
-    console.log('in set articles')
     let div = document.getElementById("content")
     div.innerHTML = ""
     
